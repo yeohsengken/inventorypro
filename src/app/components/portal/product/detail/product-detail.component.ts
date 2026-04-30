@@ -6,6 +6,7 @@ import { ProductService } from '../../../../shared/services/product.service';
 import { Product } from '../../../../shared/models/inventory.models';
 import { PageHeaderComponent } from '../../../../shared/components/page-header/page-header.component';
 import { LoadingComponent } from '../../../../shared/components/loading/loading.component';
+import { PortalPageContentComponent } from '../../../../shared/components/portal-page-content/portal-page-content.component';
 
 @Component({
   selector: 'app-product-detail',
@@ -13,6 +14,7 @@ import { LoadingComponent } from '../../../../shared/components/loading/loading.
   imports: [
     CommonModule, FormsModule, RouterModule,
     PageHeaderComponent, LoadingComponent,
+    PortalPageContentComponent,
   ],
   templateUrl: './product-detail.component.html',
 })

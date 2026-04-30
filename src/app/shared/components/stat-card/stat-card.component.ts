@@ -5,18 +5,21 @@ import { CommonModule } from '@angular/common';
   selector: 'app-stat-card',
   standalone: true,
   imports: [CommonModule],
+  host: {
+    class: 'block h-full',
+  },
   template: `
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-      <p class="text-sm font-medium text-gray-500">{{ label() }}</p>
-      <p class="text-3xl font-bold mt-1"
+    <div class="flex h-full min-h-36 flex-col justify-between rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+      <p class="text-sm font-semibold text-slate-500">{{ label() }}</p>
+      <p class="mt-4 text-3xl font-bold leading-none"
         [class.text-red-600]="accent() === 'danger'"
         [class.text-green-600]="accent() === 'success'"
-        [class.text-gray-800]="accent() === 'default'"
+        [class.text-slate-900]="accent() === 'default'"
       >{{ value() }}</p>
       @if (hint()) {
-        <p class="text-xs mt-1" [class.text-red-500]="accent() === 'danger'"
+        <p class="mt-3 text-sm" [class.text-red-500]="accent() === 'danger'"
                               [class.text-green-500]="accent() === 'success'"
-                              [class.text-gray-400]="accent() === 'default'">{{ hint() }}</p>
+                              [class.text-slate-400]="accent() === 'default'">{{ hint() }}</p>
       }
     </div>
   `,

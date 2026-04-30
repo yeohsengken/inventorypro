@@ -7,7 +7,11 @@ import { CommonModule } from '@angular/common';
   imports: [CommonModule],
   template: `
     <div class="flex items-center justify-between mb-6">
-      <h2 class="text-xl font-semibold text-gray-800">{{ title() }}</h2>
+      @if (showTitle()) {
+        <h2 class="text-xl font-semibold text-gray-800">{{ title() }}</h2>
+      } @else {
+        <span></span>
+      }
       @if (showButton()) {
         <button (click)="onAction.emit()"
           class="inline-flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors shadow-sm">
@@ -22,6 +26,7 @@ import { CommonModule } from '@angular/common';
 })
 export class PageHeaderComponent {
   title = input.required<string>();
+  showTitle = input<boolean>(true);
   buttonLabel = input<string>('');
   showButton = input<boolean>(false);
   onAction = output<void>();

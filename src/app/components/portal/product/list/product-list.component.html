@@ -1,5 +1,6 @@
 <app-page-header
   title="Products"
+  [showTitle]="false"
   buttonLabel="Add Product"
   [showButton]="true"
   (onAction)="addProduct()"
@@ -16,7 +17,7 @@
     (onAction)="addProduct()"
   />
 } @else {
-  <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+  <app-portal-page-content>
     <div class="overflow-x-auto">
       <table class="w-full">
         <thead>
@@ -78,7 +79,7 @@
         </tbody>
       </table>
     </div>
-  </div>
+  </app-portal-page-content>
 }
 
 <app-confirm-dialog

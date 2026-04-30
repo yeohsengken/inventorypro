@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './shared/guards/auth.guard';
 import { AuthLayoutComponent } from './layouts/auth-layout/auth-layout.component';
-import { ShellComponent } from './layouts/shell/shell.component';
+import { PortalLayoutComponent } from './layouts/portal-layout/portal-layout.component';
 
 export const routes: Routes = [
   {
@@ -12,7 +12,7 @@ export const routes: Routes = [
   },
   {
     path: '',
-    component: ShellComponent,
+    component: PortalLayoutComponent,
     canActivate: [authGuard],
     children: [
       {

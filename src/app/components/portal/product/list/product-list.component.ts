@@ -7,6 +7,7 @@ import { PageHeaderComponent } from '../../../../shared/components/page-header/p
 import { LoadingComponent } from '../../../../shared/components/loading/loading.component';
 import { EmptyStateComponent } from '../../../../shared/components/empty-state/empty-state.component';
 import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
+import { PortalPageContentComponent } from '../../../../shared/components/portal-page-content/portal-page-content.component';
 
 @Component({
   selector: 'app-product-list',
@@ -15,6 +16,7 @@ import { ConfirmDialogComponent } from '../../../../shared/components/confirm-di
     CommonModule, RouterModule,
     PageHeaderComponent, LoadingComponent,
     EmptyStateComponent, ConfirmDialogComponent,
+    PortalPageContentComponent,
   ],
   templateUrl: './product-list.component.html',
 })

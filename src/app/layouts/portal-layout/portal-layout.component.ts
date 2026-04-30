@@ -4,9 +4,9 @@ import { SidebarComponent } from './sidebar/sidebar.component';
 import { TopbarComponent } from './topbar/topbar.component';
 
 @Component({
-  selector: 'app-shell',
+  selector: 'app-portal-layout',
   standalone: true,
   imports: [RouterOutlet, SidebarComponent, TopbarComponent],
-  templateUrl: './shell.component.html',
+  templateUrl: './portal-layout.component.html',
 })
-export class ShellComponent {}
+export class PortalLayoutComponent {}

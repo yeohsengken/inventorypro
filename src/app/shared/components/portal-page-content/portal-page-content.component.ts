@@ -1,17 +1,22 @@
-import { Component } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-portal-page-content',
   standalone: true,
   imports: [CommonModule],
+  host: {
+    class: 'block',
+  },
   template: `
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+    <div
+      class="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm"
+      [class.p-5]="padded()"
+    >
       <ng-content />
     </div>
   `,
-  styles: [`
-    :host { display: block; }
-  `],
 })
-export class PortalPageContentComponent {}
+export class PortalPageContentComponent {
+  padded = input(false);
+}

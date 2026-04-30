@@ -7,7 +7,7 @@
   <app-loading />
 } @else {
   <div class="max-w-2xl">
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+    <app-portal-page-content [padded]="true">
       @if (errorMessage) {
         <div class="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
           <p class="text-sm text-red-700">{{ errorMessage }}</p>
@@ -77,6 +77,6 @@
           </button>
         </div>
       </form>
-    </div>
+    </app-portal-page-content>
   </div>
 }

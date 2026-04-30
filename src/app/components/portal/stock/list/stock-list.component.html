@@ -1,9 +1,9 @@
-<app-page-header title="Stock Movement" [showButton]="false" />
+<app-page-header title="Stock Movement" [showTitle]="false" [showButton]="false" />
 
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
   <!-- Form -->
   <div class="lg:col-span-1">
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+    <app-portal-page-content [padded]="true">
       <h3 class="text-sm font-semibold text-gray-800 mb-4">Record Movement</h3>
 
       @if (errorMessage) {
@@ -75,12 +75,12 @@
           Record Movement
         }
       </button>
-    </div>
+    </app-portal-page-content>
   </div>
 
   <!-- History -->
   <div class="lg:col-span-2">
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+    <app-portal-page-content>
       <div class="px-6 py-4 border-b border-gray-100">
         <h3 class="text-sm font-semibold text-gray-800">Movement History</h3>
       </div>
@@ -125,6 +125,6 @@
           </table>
         </div>
       }
-    </div>
+    </app-portal-page-content>
   </div>
 </div>

@@ -7,6 +7,7 @@ import { StockMovement, Product } from '../../../../shared/models/inventory.mode
 import { PageHeaderComponent } from '../../../../shared/components/page-header/page-header.component';
 import { LoadingComponent } from '../../../../shared/components/loading/loading.component';
 import { EmptyStateComponent } from '../../../../shared/components/empty-state/empty-state.component';
+import { PortalPageContentComponent } from '../../../../shared/components/portal-page-content/portal-page-content.component';
 
 @Component({
   selector: 'app-stock-list',
@@ -14,6 +15,7 @@ import { EmptyStateComponent } from '../../../../shared/components/empty-state/e
   imports: [
     CommonModule, FormsModule,
     PageHeaderComponent, LoadingComponent, EmptyStateComponent,
+    PortalPageContentComponent,
   ],
   templateUrl: './stock-list.component.html',
 })

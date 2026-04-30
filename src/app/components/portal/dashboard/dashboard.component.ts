@@ -7,11 +7,12 @@ import { StockService } from '../../../shared/services/stock.service';
 import { Product, StockMovement } from '../../../shared/models/inventory.models';
 import { StatCardComponent } from '../../../shared/components/stat-card/stat-card.component';
 import { LoadingComponent } from '../../../shared/components/loading/loading.component';
+import { PortalPageContentComponent } from '../../../shared/components/portal-page-content/portal-page-content.component';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterModule, StatCardComponent, LoadingComponent],
+  imports: [CommonModule, RouterModule, StatCardComponent, LoadingComponent, PortalPageContentComponent],
   templateUrl: './dashboard.component.html',
 })
 export class DashboardComponent implements OnInit {
