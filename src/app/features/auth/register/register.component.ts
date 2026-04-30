@@ -16,6 +16,7 @@ export class RegisterComponent {
   private router = inject(Router);
   email = '';
   password = '';
+  confirmPassword = '';
   loading = false;
   errorMessage = '';
   successMessage = '';
@@ -24,6 +25,20 @@ export class RegisterComponent {
     this.loading = true;
     this.errorMessage = '';
     this.successMessage = '';
+
+    // Check if passwords match
+    if (this.password !== this.confirmPassword) {
+      this.errorMessage = 'Passwords do not match.';
+      this.loading = false;
+      return;
+    }
+
+    // Check password length
+    if (this.password.length < 6) {
+      this.errorMessage = 'Password must be at least 6 characters.';
+      this.loading = false;
+      return;
+    }
 
     const { error } = await this.supabaseService.signUp(
       this.email,
