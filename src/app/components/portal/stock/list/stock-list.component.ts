@@ -1,23 +1,23 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { StockService } from '../stock.service';
-import { ProductService } from '../../products/product.service';
-import { StockMovement, Product } from '../../../models/inventory.models';
-import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
-import { LoadingComponent } from '../../../shared/components/loading/loading.component';
-import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
+import { StockService } from '../../../../shared/services/stock.service';
+import { ProductService } from '../../../../shared/services/product.service';
+import { StockMovement, Product } from '../../../../shared/models/inventory.models';
+import { PageHeaderComponent } from '../../../../shared/components/page-header/page-header.component';
+import { LoadingComponent } from '../../../../shared/components/loading/loading.component';
+import { EmptyStateComponent } from '../../../../shared/components/empty-state/empty-state.component';
 
 @Component({
-  selector: 'app-stock-movement',
+  selector: 'app-stock-list',
   standalone: true,
   imports: [
     CommonModule, FormsModule,
     PageHeaderComponent, LoadingComponent, EmptyStateComponent,
   ],
-  templateUrl: './stock-movement.component.html',
+  templateUrl: './stock-list.component.html',
 })
-export class StockMovementComponent implements OnInit {
+export class StockListComponent implements OnInit {
   private stockService = inject(StockService);
   private productService = inject(ProductService);
 

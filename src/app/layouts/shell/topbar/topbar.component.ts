@@ -1,7 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule, NavigationEnd } from '@angular/router';
-import { SupabaseService } from '../../../core/services/supabase.service';
+import { SupabaseService } from '../../../shared/services/supabase.service';
 import { filter, map } from 'rxjs/operators';
 
 const PAGE_TITLES: Record<string, string> = {

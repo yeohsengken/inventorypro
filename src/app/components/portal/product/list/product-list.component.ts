@@ -1,12 +1,12 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
-import { ProductService } from '../product.service';
-import { Product } from '../../../models/inventory.models';
-import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
-import { LoadingComponent } from '../../../shared/components/loading/loading.component';
-import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
-import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
+import { ProductService } from '../../../../shared/services/product.service';
+import { Product } from '../../../../shared/models/inventory.models';
+import { PageHeaderComponent } from '../../../../shared/components/page-header/page-header.component';
+import { LoadingComponent } from '../../../../shared/components/loading/loading.component';
+import { EmptyStateComponent } from '../../../../shared/components/empty-state/empty-state.component';
+import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-product-list',

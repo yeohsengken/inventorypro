@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { SupabaseService } from '../../../core/services/supabase.service';
+import { SupabaseService } from '../../../../shared/services/supabase.service';
 import { CommonModule } from '@angular/common';
 
 @Component({

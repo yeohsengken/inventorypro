@@ -1,12 +1,12 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { SupabaseService } from '../../core/services/supabase.service';
-import { ProductService } from '../products/product.service';
-import { StockService } from '../stock/stock.service';
-import { Product, StockMovement } from '../../models/inventory.models';
-import { StatCardComponent } from '../../shared/components/stat-card/stat-card.component';
-import { LoadingComponent } from '../../shared/components/loading/loading.component';
+import { SupabaseService } from '../../../shared/services/supabase.service';
+import { ProductService } from '../../../shared/services/product.service';
+import { StockService } from '../../../shared/services/stock.service';
+import { Product, StockMovement } from '../../../shared/models/inventory.models';
+import { StatCardComponent } from '../../../shared/components/stat-card/stat-card.component';
+import { LoadingComponent } from '../../../shared/components/loading/loading.component';
 
 @Component({
   selector: 'app-dashboard',

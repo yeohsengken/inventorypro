@@ -2,21 +2,21 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { ProductService } from '../product.service';
-import { Product } from '../../../models/inventory.models';
-import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
-import { LoadingComponent } from '../../../shared/components/loading/loading.component';
+import { ProductService } from '../../../../shared/services/product.service';
+import { Product } from '../../../../shared/models/inventory.models';
+import { PageHeaderComponent } from '../../../../shared/components/page-header/page-header.component';
+import { LoadingComponent } from '../../../../shared/components/loading/loading.component';
 
 @Component({
-  selector: 'app-product-form',
+  selector: 'app-product-detail',
   standalone: true,
   imports: [
     CommonModule, FormsModule, RouterModule,
     PageHeaderComponent, LoadingComponent,
   ],
-  templateUrl: './product-form.component.html',
+  templateUrl: './product-detail.component.html',
 })
-export class ProductFormComponent implements OnInit {
+export class ProductDetailComponent implements OnInit {
   private productService = inject(ProductService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
