@@ -2,24 +2,93 @@
   <!-- Top bar -->
   <header class="bg-white shadow">
     <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-      <h1 class="text-xl font-bold text-gray-800">InventoryPro</h1>
+      <div class="flex items-center gap-6">
+        <h1 class="text-xl font-bold text-gray-800">InventoryPro</h1>
+        <nav class="hidden md:flex gap-4">
+          <a routerLink="/dashboard" class="text-blue-600 font-medium text-sm">Dashboard</a>
+          <a routerLink="/products" class="text-gray-600 hover:text-blue-600 text-sm">Products</a>
+          <a routerLink="/stock" class="text-gray-600 hover:text-blue-600 text-sm">Stock</a>
+        </nav>
+      </div>
       <div class="flex items-center gap-4">
         <span class="text-gray-600 text-sm">{{ userEmail }}</span>
-        <button
-          (click)="logout()"
-          class="bg-red-500 text-white px-4 py-2 rounded-md text-sm hover:bg-red-600"
-        >
-          Logout
-        </button>
+        <button (click)="logout()" class="bg-red-500 text-white px-4 py-2 rounded-md text-sm hover:bg-red-600">Logout</button>
       </div>
     </div>
   </header>
 
   <!-- Main content -->
   <main class="max-w-7xl mx-auto px-4 py-8">
-    <div class="bg-white rounded-lg shadow p-8">
-      <h2 class="text-2xl font-semibold text-gray-800 mb-4">Dashboard</h2>
-      <p class="text-gray-600">Welcome to InventoryPro! Your dashboard will show inventory stats and quick actions here soon.</p>
+    <div *ngIf="loading" class="text-center py-12 text-gray-500">Loading dashboard...</div>
+
+    <div *ngIf="!loading">
+      <h2 class="text-2xl font-semibold text-gray-800 mb-6">Dashboard</h2>
+
+      <!-- Summary cards -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+        <div class="bg-white rounded-lg shadow p-6">
+          <p class="text-gray-500 text-sm">Total Products</p>
+          <p class="text-3xl font-bold text-gray-800 mt-1">{{ totalProducts }}</p>
+        </div>
+
+        <a routerLink="/products" class="bg-white rounded-lg shadow p-6 block hover:shadow-md transition">
+          <p class="text-gray-500 text-sm">Low Stock Items</p>
+          <p class="text-3xl font-bold" [class.text-red-600]="lowStockProducts.length > 0" [class.text-gray-800]="lowStockProducts.length === 0">
+            {{ lowStockProducts.length }}
+          </p>
+          <p *ngIf="lowStockProducts.length > 0" class="text-red-500 text-xs mt-1">Needs attention</p>
+        </a>
+
+        <a routerLink="/stock" class="bg-white rounded-lg shadow p-6 block hover:shadow-md transition">
+          <p class="text-gray-500 text-sm">Recent Activity</p>
+          <p class="text-3xl font-bold text-gray-800 mt-1">{{ recentMovements.length }}</p>
+          <p class="text-gray-400 text-xs mt-1">Stock movements today</p>
+        </a>
+      </div>
+
+      <!-- Low stock alert -->
+      <div *ngIf="lowStockProducts.length > 0" class="bg-red-50 border border-red-200 rounded-lg p-4 mb-8">
+        <h3 class="font-medium text-red-800 mb-2">Low Stock Alerts</h3>
+        <ul class="list-disc list-inside text-sm text-red-700">
+          <li *ngFor="let p of lowStockProducts">
+            {{ p.name }} — only {{ p.quantity }} left (threshold: {{ p.low_stock_threshold }})
+          </li>
+        </ul>
+      </div>
+
+      <!-- Recent movements -->
+      <div class="bg-white rounded-lg shadow">
+        <div class="px-6 py-4 border-b border-gray-200">
+          <h3 class="text-lg font-medium text-gray-800">Recent Stock Movements</h3>
+        </div>
+
+        <div *ngIf="recentMovements.length === 0" class="text-center py-8 text-gray-500">
+          No recent movements.
+        </div>
+
+        <table *ngIf="recentMovements.length > 0" class="w-full">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="text-left px-4 py-3 text-sm font-medium text-gray-600">Product</th>
+              <th class="text-center px-4 py-3 text-sm font-medium text-gray-600">Type</th>
+              <th class="text-right px-4 py-3 text-sm font-medium text-gray-600">Qty</th>
+              <th class="text-right px-4 py-3 text-sm font-medium text-gray-600">Date</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-200">
+            <tr *ngFor="let m of recentMovements">
+              <td class="px-4 py-3 text-gray-800">{{ getProductName(m) }}</td>
+              <td class="px-4 py-3 text-center">
+                <span [class.text-green-600]="m.type==='in'" [class.text-red-600]="m.type==='out'" class="font-medium">
+                  {{ m.type === 'in' ? 'IN' : 'OUT' }}
+                </span>
+              </td>
+              <td class="px-4 py-3 text-right">{{ m.quantity }}</td>
+              <td class="px-4 py-3 text-right text-sm text-gray-500">{{ m.created_at }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </main>
 </div>

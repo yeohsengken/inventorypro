@@ -1,0 +1,57 @@
+<div>
+  <div class="flex justify-between items-center mb-6">
+    <h2 class="text-2xl font-semibold text-gray-800">Products</h2>
+    <button (click)="addProduct()" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
+      + Add Product
+    </button>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="text-center py-8 text-gray-500">Loading...</div>
+
+  <!-- Empty state -->
+  <div *ngIf="!loading && products.length === 0" class="bg-white rounded-lg shadow p-8 text-center">
+    <p class="text-gray-500 mb-4">No products yet.</p>
+    <button (click)="addProduct()" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
+      Add Your First Product
+    </button>
+  </div>
+
+  <!-- Product table -->
+  <div *ngIf="!loading && products.length > 0" class="bg-white rounded-lg shadow overflow-hidden">
+    <table class="w-full">
+      <thead class="bg-gray-50">
+        <tr>
+          <th class="text-left px-4 py-3 text-sm font-medium text-gray-600">Name</th>
+          <th class="text-left px-4 py-3 text-sm font-medium text-gray-600">SKU</th>
+          <th class="text-left px-4 py-3 text-sm font-medium text-gray-600">Category</th>
+          <th class="text-right px-4 py-3 text-sm font-medium text-gray-600">Price</th>
+          <th class="text-right px-4 py-3 text-sm font-medium text-gray-600">Quantity</th>
+          <th class="text-center px-4 py-3 text-sm font-medium text-gray-600">Actions</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-200">
+        <tr *ngFor="let p of products" class="hover:bg-gray-50">
+          <td class="px-4 py-3">
+            <span class="font-medium text-gray-800">{{ p.name }}</span>
+            <p *ngIf="p.description" class="text-xs text-gray-500 mt-1">{{ p.description }}</p>
+          </td>
+          <td class="px-4 py-3 text-gray-600">{{ p.sku || '-' }}</td>
+          <td class="px-4 py-3 text-gray-600">{{ p.category || '-' }}</td>
+          <td class="px-4 py-3 text-right text-gray-800">RM {{ p.price.toFixed(2) }}</td>
+          <td class="px-4 py-3 text-right">
+            <span [class.text-red-600]="p.quantity <= p.low_stock_threshold"
+                  [class.font-bold]="p.quantity <= p.low_stock_threshold">
+              {{ p.quantity }}
+            </span>
+            <span *ngIf="p.quantity <= p.low_stock_threshold" class="text-xs text-red-500 ml-1">(Low)</span>
+          </td>
+          <td class="px-4 py-3 text-center">
+            <button (click)="editProduct(p.id)" class="text-blue-600 hover:text-blue-800 text-sm mr-3">Edit</button>
+            <button (click)="deleteProduct(p.id)" class="text-red-600 hover:text-red-800 text-sm">Delete</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
