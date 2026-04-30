@@ -1,14 +1,20 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { StockService } from '../stock.service';
 import { ProductService } from '../../products/product.service';
 import { StockMovement, Product } from '../../../models/inventory.models';
+import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
+import { LoadingComponent } from '../../../shared/components/loading/loading.component';
+import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
 
 @Component({
   selector: 'app-stock-movement',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [
+    CommonModule, FormsModule,
+    PageHeaderComponent, LoadingComponent, EmptyStateComponent,
+  ],
   templateUrl: './stock-movement.component.html',
 })
 export class StockMovementComponent implements OnInit {
@@ -16,9 +22,9 @@ export class StockMovementComponent implements OnInit {
   private productService = inject(ProductService);
 
   products: Product[] = [];
-  movements: (StockMovement & { product_name?: string })[] = [];
-  loading = true;
-  saving = false;
+  movements: StockMovement[] = [];
+  loading = signal(true);
+  saving = signal(false);
   errorMessage = '';
   successMessage = '';
 
@@ -35,10 +41,10 @@ export class StockMovementComponent implements OnInit {
     try {
       this.products = await this.productService.getAll();
       this.movements = await this.stockService.getAll();
-    } catch (err: any) {
-      console.error('Failed to load', err);
+    } catch {
+      // ignore
     } finally {
-      this.loading = false;
+      this.loading.set(false);
     }
   }
 
@@ -52,7 +58,7 @@ export class StockMovementComponent implements OnInit {
       return;
     }
 
-    this.saving = true;
+    this.saving.set(true);
     this.errorMessage = '';
     this.successMessage = '';
 
@@ -67,14 +73,12 @@ export class StockMovementComponent implements OnInit {
       this.successMessage = 'Stock movement recorded!';
       this.movementQuantity = 1;
       this.movementNotes = '';
-
-      // Reload data
       this.movements = await this.stockService.getAll();
       this.products = await this.productService.getAll();
     } catch (err: any) {
       this.errorMessage = err.message;
     } finally {
-      this.saving = false;
+      this.saving.set(false);
     }
   }
 

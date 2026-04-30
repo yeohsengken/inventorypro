@@ -1,14 +1,19 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { ProductService } from '../product.service';
 import { Product } from '../../../models/inventory.models';
+import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
+import { LoadingComponent } from '../../../shared/components/loading/loading.component';
 
 @Component({
   selector: 'app-product-form',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [
+    CommonModule, FormsModule, RouterModule,
+    PageHeaderComponent, LoadingComponent,
+  ],
   templateUrl: './product-form.component.html',
 })
 export class ProductFormComponent implements OnInit {
@@ -16,10 +21,10 @@ export class ProductFormComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
 
-  isEditing = false;
+  isEditing = signal(false);
   productId: number | null = null;
-  loading = false;
-  saving = false;
+  loading = signal(false);
+  saving = signal(false);
   errorMessage = '';
 
   product: Partial<Product> = {
@@ -35,38 +40,36 @@ export class ProductFormComponent implements OnInit {
   ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
-      this.isEditing = true;
+      this.isEditing.set(true);
       this.productId = Number(id);
       this.loadProduct();
     }
   }
 
   async loadProduct() {
-    this.loading = true;
+    this.loading.set(true);
     try {
       const data = await this.productService.getById(this.productId!);
-      if (data) {
-        this.product = { ...data };
-      }
-    } catch (err: any) {
+      if (data) this.product = { ...data };
+    } catch {
       this.errorMessage = 'Failed to load product';
     } finally {
-      this.loading = false;
+      this.loading.set(false);
     }
   }
 
   async save() {
-    this.saving = true;
+    this.saving.set(true);
     this.errorMessage = '';
 
     if (!this.product.name?.trim()) {
       this.errorMessage = 'Product name is required';
-      this.saving = false;
+      this.saving.set(false);
       return;
     }
 
     try {
-      if (this.isEditing && this.productId) {
+      if (this.isEditing() && this.productId) {
         await this.productService.update(this.productId, this.product);
       } else {
         await this.productService.create(this.product);
@@ -74,7 +77,7 @@ export class ProductFormComponent implements OnInit {
       this.router.navigate(['/products']);
     } catch (err: any) {
       this.errorMessage = err.message;
-      this.saving = false;
+      this.saving.set(false);
     }
   }
 
