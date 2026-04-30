@@ -9,7 +9,9 @@ import { BehaviorSubject } from 'rxjs';
 export class SupabaseService {
   private supabase: SupabaseClient;
   private currentUserSubject = new BehaviorSubject<User | null>(null);
+  private sessionReadySubject = new BehaviorSubject<boolean>(false);
   currentUser$ = this.currentUserSubject.asObservable();
+  sessionReady$ = this.sessionReadySubject.asObservable();
 
   constructor() {
     this.supabase = createClient(
@@ -17,12 +19,11 @@ export class SupabaseService {
       environment.supabaseAnonKey
     );
 
-    // Check if user is already logged in
     this.supabase.auth.getSession().then(({ data }) => {
       this.currentUserSubject.next(data.session?.user ?? null);
+      this.sessionReadySubject.next(true);
     });
 
-    // Listen for auth changes
     this.supabase.auth.onAuthStateChange((_event, session) => {
       this.currentUserSubject.next(session?.user ?? null);
     });
