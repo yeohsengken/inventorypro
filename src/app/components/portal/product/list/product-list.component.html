@@ -1,92 +1,116 @@
-<app-page-header
-  title="Products"
-  [showTitle]="false"
-  buttonLabel="Add Product"
-  [showButton]="true"
-  (onAction)="addProduct()"
-/>
+<app-portal-actions>
+  <app-portal-button icon="pi-download">
+    Export
+  </app-portal-button>
 
-@if (loading()) {
-  <app-loading />
-} @else if (products.length === 0) {
-  <app-empty-state
-    title="No products yet"
-    message="Get started by adding your first product."
-    buttonLabel="Add Product"
-    [showButton]="true"
-    (onAction)="addProduct()"
-  />
-} @else {
-  <app-portal-page-content>
-    <div class="overflow-x-auto">
-      <table class="w-full">
-        <thead>
-          <tr class="border-b border-gray-100">
-            <th class="text-left px-4 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wider">Product</th>
-            <th class="text-left px-4 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wider">SKU</th>
-            <th class="text-left px-4 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wider">Category</th>
-            <th class="text-right px-4 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wider">Price</th>
-            <th class="text-right px-4 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wider">Stock</th>
-            <th class="text-center px-4 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wider">Actions</th>
-          </tr>
-        </thead>
-        <tbody class="divide-y divide-gray-50">
-          @for (p of products; track p.id) {
-            <tr class="hover:bg-gray-50/50 transition-colors">
-              <td class="px-4 py-4">
-                <p class="text-sm font-medium text-gray-800">{{ p.name }}</p>
-                @if (p.description) {
-                  <p class="text-xs text-gray-400 mt-0.5">{{ p.description }}</p>
-                }
-              </td>
-              <td class="px-4 py-4 text-sm text-gray-500">{{ p.sku || '—' }}</td>
-              <td class="px-4 py-4">
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
-                  {{ p.category || 'Uncategorized' }}
-                </span>
-              </td>
-              <td class="px-4 py-4 text-sm text-gray-800 text-right font-medium">RM{{ p.price.toFixed(2) }}</td>
-              <td class="px-4 py-4 text-right">
-                @if (p.quantity <= p.low_stock_threshold) {
-                  <span class="inline-flex items-center gap-1 text-sm font-semibold text-red-600">
-                    <span class="w-2 h-2 rounded-full bg-red-500"></span>
-                    {{ p.quantity }}
-                  </span>
-                } @else {
-                  <span class="text-sm text-gray-700">{{ p.quantity }}</span>
-                }
-              </td>
-              <td class="px-4 py-4 text-center">
-                <div class="inline-flex items-center gap-1">
-                  <button (click)="editProduct(p.id)"
-                    class="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                    title="Edit">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                    </svg>
-                  </button>
-                  <button (click)="confirmDelete(p)"
-                    class="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                    title="Delete">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                    </svg>
-                  </button>
-                </div>
-              </td>
-            </tr>
-          }
-        </tbody>
-      </table>
-    </div>
-  </app-portal-page-content>
-}
+  <app-portal-button variant="primary" icon="pi-plus" link="/products/new">
+    Add Chemical
+  </app-portal-button>
+</app-portal-actions>
 
-<app-confirm-dialog
-  [visible]="showDeleteDialog()"
-  title="Delete Product"
-  [message]="'Are you sure you want to delete ' + (productToDelete?.name || 'this product') + '? This action cannot be undone.'"
-  confirmLabel="Delete"
-  (onConfirm)="deleteProduct()"
-  (onCancel)="showDeleteDialog.set(false)"
-/>
+<app-portal-page-content>
+  <app-portal-filter-bar layout="chemical-list">
+      <app-portal-search-filter
+        [value]="searchTerm()"
+        placeholder="Search chemicals, code, or CAS no."
+        (valueChange)="searchTerm.set($event); first.set(0)"
+      />
+
+      <app-portal-select-filter
+        [value]="selectedHazardClass()"
+        [options]="hazardClassOptions"
+        (valueChange)="selectedHazardClass.set($event); first.set(0)"
+      />
+
+      <app-portal-select-filter
+        [value]="selectedLocation()"
+        [options]="locationOptions"
+        (valueChange)="selectedLocation.set($event); first.set(0)"
+      />
+
+      <app-portal-select-filter
+        [value]="selectedStockStatus()"
+        [options]="stockStatusOptions"
+        (valueChange)="selectedStockStatus.set($event); first.set(0)"
+      />
+
+      <app-portal-select-filter
+        [value]="selectedSdsStatus()"
+        [options]="sdsStatusOptions"
+        (valueChange)="selectedSdsStatus.set($event); first.set(0)"
+      />
+
+      <app-portal-button icon="pi-refresh" [full]="true" (buttonClick)="resetFilters()">
+        Reset
+      </app-portal-button>
+  </app-portal-filter-bar>
+
+  <app-portal-data-table [config]="tableConfig()">
+      <ng-template portalDataTableBody let-chemical>
+        <tr>
+          <td>
+            <div class="flex min-w-0 items-center gap-3">
+              <span
+                class="flex h-11 w-11 flex-none items-center justify-center rounded-md text-xs font-bold"
+                [ngClass]="chemical.avatarClass"
+                aria-hidden="true"
+              >
+                {{ chemical.avatar }}
+              </span>
+              <a
+                [routerLink]="['/products', chemical.id]"
+                class="block min-w-0 truncate text-sm font-semibold text-slate-900 transition-colors hover:text-blue-600"
+                [title]="chemical.name"
+              >
+                {{ chemical.name }}
+              </a>
+            </div>
+          </td>
+          <td class="text-sm text-slate-600">{{ chemical.code }}</td>
+          <td class="text-sm text-slate-600">{{ chemical.casNo }}</td>
+          <td>
+            <app-portal-badge [tone]="hazardClassTone(chemical.hazardClass)">
+              {{ chemical.hazardClass }}
+            </app-portal-badge>
+          </td>
+          <td class="text-sm text-slate-600">{{ chemical.location }}</td>
+          <td class="text-sm font-semibold" [ngClass]="stockClass(chemical.stock)">
+            {{ chemical.stock }}
+          </td>
+          <td class="text-sm text-slate-700">{{ chemical.unit }}</td>
+          <td>
+            <app-portal-badge [tone]="expiryStatusTone(chemical.expiryStatus)">
+              {{ chemical.expiryStatus }}
+            </app-portal-badge>
+          </td>
+          <td>
+            <app-portal-badge [tone]="sdsStatusTone(chemical.sdsStatus)">
+              {{ chemical.sdsStatus }}
+            </app-portal-badge>
+          </td>
+          <td class="text-sm text-slate-600">{{ chemical.updatedAt }}</td>
+          <td class="text-center">
+            <app-portal-inline-actions>
+              <app-portal-button
+                size="icon"
+                variant="ghost"
+                icon="pi-pencil"
+                [link]="['/products', chemical.id, 'edit']"
+                ariaLabel="Edit chemical"
+                title="Edit"
+              />
+
+              <app-portal-button
+                size="icon"
+                variant="ghost-danger"
+                icon="pi-trash"
+                ariaLabel="Delete chemical"
+                title="Delete"
+              />
+            </app-portal-inline-actions>
+          </td>
+        </tr>
+      </ng-template>
+
+  </app-portal-data-table>
+</app-portal-page-content>

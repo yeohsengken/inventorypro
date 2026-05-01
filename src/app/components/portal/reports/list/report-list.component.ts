@@ -1,0 +1,257 @@
+import { CommonModule } from '@angular/common';
+import { Component, computed, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { PortalActionsComponent, PortalInlineActionsComponent } from '../../../../shared/components/portal-actions/portal-actions.component';
+import { PortalBadgeComponent, PortalBadgeTone } from '../../../../shared/components/portal-badge/portal-badge.component';
+import {
+  type PortalDataTableConfig,
+  PortalDataTableBodyDirective,
+  PortalDataTableComponent,
+} from '../../../../shared/components/portal-data-table/portal-data-table.component';
+import {
+  PortalFilterBarComponent,
+  PortalSearchFilterComponent,
+  PortalSelectFilterComponent,
+} from '../../../../shared/components/portal-filters/portal-filters.component';
+import { PortalButtonComponent } from '../../../../shared/components/portal-button/portal-button.component';
+import { PortalPageContentComponent } from '../../../../shared/components/portal-page-content/portal-page-content.component';
+import { PortalMetricGridComponent, PortalMetricItem } from '../../../../shared/components/portal-metric-grid/portal-metric-grid.component';
+
+type ReportType = 'Inventory' | 'Movement' | 'SDS' | 'Compliance';
+type ReportStatus = 'Ready' | 'Scheduled' | 'Draft' | 'Failed';
+
+interface ReportListItem {
+  id: number;
+  reportId: string;
+  name: string;
+  type: ReportType;
+  period: string;
+  generatedBy: string;
+  generatedAt: string;
+  status: ReportStatus;
+  format: 'PDF' | 'CSV' | 'XLSX';
+  size: string;
+}
+
+const REPORT_METRICS: PortalMetricItem[] = [
+  {
+    label: 'Total Reports',
+    value: '24',
+    hint: 'Generated this year',
+    tone: 'blue',
+  },
+  {
+    label: 'Ready to Download',
+    value: '18',
+    hint: 'Completed reports',
+    tone: 'green',
+  },
+  {
+    label: 'Scheduled',
+    value: '4',
+    hint: 'Upcoming exports',
+    tone: 'orange',
+  },
+  {
+    label: 'Failed',
+    value: '2',
+    hint: 'Need review',
+    tone: 'red',
+  },
+];
+
+const REPORTS: ReportListItem[] = [
+  {
+    id: 1,
+    reportId: 'RPT-2026-001',
+    name: 'Monthly Chemical Inventory',
+    type: 'Inventory',
+    period: 'May 2026',
+    generatedBy: 'Admin',
+    generatedAt: 'May 15, 2026 10:24 AM',
+    status: 'Ready',
+    format: 'PDF',
+    size: '1.8 MB',
+  },
+  {
+    id: 2,
+    reportId: 'RPT-2026-002',
+    name: 'Stock Movement Summary',
+    type: 'Movement',
+    period: 'May 2026',
+    generatedBy: 'John Tan',
+    generatedAt: 'May 15, 2026 09:15 AM',
+    status: 'Ready',
+    format: 'XLSX',
+    size: '940 KB',
+  },
+  {
+    id: 3,
+    reportId: 'RPT-2026-003',
+    name: 'SDS Expiry Review',
+    type: 'SDS',
+    period: 'Q2 2026',
+    generatedBy: 'Mei Ling',
+    generatedAt: 'May 14, 2026 04:45 PM',
+    status: 'Scheduled',
+    format: 'PDF',
+    size: '-',
+  },
+  {
+    id: 4,
+    reportId: 'RPT-2026-004',
+    name: 'Hazard Compliance Audit',
+    type: 'Compliance',
+    period: 'Apr 2026',
+    generatedBy: 'Admin',
+    generatedAt: 'May 14, 2026 11:30 AM',
+    status: 'Draft',
+    format: 'PDF',
+    size: '720 KB',
+  },
+  {
+    id: 5,
+    reportId: 'RPT-2026-005',
+    name: 'Low Stock Chemicals',
+    type: 'Inventory',
+    period: 'May 2026',
+    generatedBy: 'Daniel',
+    generatedAt: 'May 13, 2026 02:10 PM',
+    status: 'Ready',
+    format: 'CSV',
+    size: '320 KB',
+  },
+  {
+    id: 6,
+    reportId: 'RPT-2026-006',
+    name: 'Disposal Activity Report',
+    type: 'Movement',
+    period: 'Apr 2026',
+    generatedBy: 'Sarah',
+    generatedAt: 'May 13, 2026 09:05 AM',
+    status: 'Failed',
+    format: 'PDF',
+    size: '-',
+  },
+];
+
+@Component({
+  selector: 'app-report-list',
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    PortalActionsComponent,
+    PortalInlineActionsComponent,
+    PortalBadgeComponent,
+    PortalDataTableComponent,
+    PortalDataTableBodyDirective,
+    PortalFilterBarComponent,
+    PortalSearchFilterComponent,
+    PortalSelectFilterComponent,
+    PortalButtonComponent,
+    PortalPageContentComponent,
+    PortalMetricGridComponent,
+  ],
+  templateUrl: './report-list.component.html',
+})
+export class ReportListComponent {
+  metrics = REPORT_METRICS;
+  reports = REPORTS;
+  searchTerm = signal('');
+  selectedType = signal('Report Type');
+  selectedStatus = signal('Status');
+  selectedPeriod = signal('Period');
+  first = signal(0);
+  rows = signal(10);
+  readonly tablePageState = { first: this.first, rows: this.rows };
+  totalReports = 24;
+  readonly tableColumnWidths = [
+    '120px',
+    '230px',
+    '120px',
+    '110px',
+    '120px',
+    '160px',
+    '110px',
+    '80px',
+    '70px',
+    '104px',
+  ] as const;
+  readonly tableColumns = [
+    { field: 'reportId', label: 'Report ID', sortable: true },
+    { field: 'name', label: 'Report Name', sortable: true },
+    { field: 'type', label: 'Type', sortable: true },
+    { field: 'period', label: 'Period', sortable: true },
+    { field: 'generatedBy', label: 'Generated By', sortable: true },
+    { field: 'generatedAt', label: 'Generated At', sortable: true },
+    { field: 'status', label: 'Status', sortable: true },
+    { field: 'format', label: 'Format', sortable: true },
+    { field: 'size', label: 'Size', sortable: true },
+    { label: 'Actions', align: 'center' },
+  ] as const;
+  tableConfig = computed<PortalDataTableConfig>(() => ({
+    value: this.filteredReports(),
+    pageState: this.tablePageState,
+    columns: this.tableColumns,
+    minWidth: '1224px',
+    columnWidths: this.tableColumnWidths,
+    totalRecords: this.totalReports,
+    recordLabel: 'reports',
+    emptyMessage: 'No reports match the selected filters.',
+    emptyColspan: 10,
+  }));
+  typeOptions = ['Report Type', 'Inventory', 'Movement', 'SDS', 'Compliance'];
+  statusOptions = ['Status', 'Ready', 'Scheduled', 'Draft', 'Failed'];
+  periodOptions = ['Period', 'May 2026', 'Apr 2026', 'Q2 2026'];
+
+  filteredReports = computed(() => {
+    const search = this.searchTerm().trim().toLowerCase();
+    const type = this.selectedType();
+    const status = this.selectedStatus();
+    const period = this.selectedPeriod();
+
+    return this.reports.filter((report) => {
+      const matchesSearch =
+        !search ||
+        report.reportId.toLowerCase().includes(search) ||
+        report.name.toLowerCase().includes(search) ||
+        report.generatedBy.toLowerCase().includes(search);
+      const matchesType = type === 'Report Type' || report.type === type;
+      const matchesStatus = status === 'Status' || report.status === status;
+      const matchesPeriod = period === 'Period' || report.period === period;
+
+      return matchesSearch && matchesType && matchesStatus && matchesPeriod;
+    });
+  });
+
+  resetFilters(): void {
+    this.searchTerm.set('');
+    this.selectedType.set('Report Type');
+    this.selectedStatus.set('Status');
+    this.selectedPeriod.set('Period');
+    this.first.set(0);
+  }
+
+  typeTone(type: ReportType): PortalBadgeTone {
+    const tones: Record<ReportType, PortalBadgeTone> = {
+      Inventory: 'blue',
+      Movement: 'purple',
+      SDS: 'green',
+      Compliance: 'orange',
+    };
+
+    return tones[type];
+  }
+
+  statusTone(status: ReportStatus): PortalBadgeTone {
+    const tones: Record<ReportStatus, PortalBadgeTone> = {
+      Ready: 'green',
+      Scheduled: 'blue',
+      Draft: 'slate',
+      Failed: 'red',
+    };
+
+    return tones[status];
+  }
+}

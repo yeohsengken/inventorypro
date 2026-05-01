@@ -1,4 +1,5 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { SupabaseService } from '../../../shared/services/supabase.service';
@@ -20,6 +21,7 @@ export class DashboardComponent implements OnInit {
   private productService = inject(ProductService);
   private stockService = inject(StockService);
   private router = inject(Router);
+  private destroyRef = inject(DestroyRef);
 
   userEmail = signal('');
   totalProducts = signal(0);
@@ -27,14 +29,17 @@ export class DashboardComponent implements OnInit {
   recentMovements = signal<StockMovement[]>([]);
   loading = signal(true);
 
-  ngOnInit() {
-    this.supabaseService.currentUser$.subscribe((user) => {
-      this.userEmail.set(user?.email ?? '');
-    });
+  ngOnInit(): void {
+    this.supabaseService.currentUser$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((user) => {
+        this.userEmail.set(user?.email ?? '');
+      });
+
     this.loadDashboard();
   }
 
-  async loadDashboard() {
+  async loadDashboard(): Promise<void> {
     try {
       const products = await this.productService.getAll();
       this.totalProducts.set(products.length);
@@ -47,9 +52,9 @@ export class DashboardComponent implements OnInit {
     }
   }
 
-  async logout() {
+  async logout(): Promise<void> {
     await this.supabaseService.signOut();
-    this.router.navigate(['/login']);
+    this.router.navigate(['/auth/login']);
   }
 
   getProductName(m: any): string {

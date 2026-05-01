@@ -13,7 +13,7 @@ export const authGuard = () => {
     switchMap(() => supabaseService.currentUser$.pipe(take(1))),
     map(user => {
       if (user) return true;
-      router.navigate(['/login']);
+      router.navigate(['/auth/login']);
       return false;
     })
   );

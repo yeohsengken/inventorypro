@@ -1,82 +1,279 @@
-<app-page-header
-  [title]="isEditing() ? 'Edit Product' : 'Add Product'"
-  [showButton]="false"
-/>
+@if (mode() === 'view') {
+  <div class="mb-5 flex flex-wrap items-center justify-between gap-3">
+    <app-portal-button icon="pi-arrow-left" link="/products">
+      Back
+    </app-portal-button>
 
-@if (loading()) {
-  <app-loading />
-} @else {
-  <div class="max-w-2xl">
-    <app-portal-page-content [padded]="true">
-      @if (errorMessage) {
-        <div class="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
-          <p class="text-sm text-red-700">{{ errorMessage }}</p>
-        </div>
-      }
+    <div class="flex items-center gap-3">
+      <app-portal-button icon="pi-pencil" [link]="['/products', chemical().id, 'edit']">
+        Edit
+      </app-portal-button>
 
-      <form (ngSubmit)="save()">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div class="md:col-span-2">
-            <label class="block text-sm font-medium text-gray-700 mb-1">Product Name *</label>
-            <input type="text" [(ngModel)]="product.name" name="name" required
-              class="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-sm" />
-          </div>
-
-          <div class="md:col-span-2">
-            <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
-            <textarea [(ngModel)]="product.description" name="description" rows="3"
-              class="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-sm"></textarea>
-          </div>
-
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Price (RM)</label>
-            <input type="number" [(ngModel)]="product.price" name="price" step="0.01" min="0"
-              class="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-sm" />
-          </div>
-
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Quantity</label>
-            <input type="number" [(ngModel)]="product.quantity" name="quantity" min="0"
-              class="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-sm" />
-          </div>
-
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">SKU</label>
-            <input type="text" [(ngModel)]="product.sku" name="sku"
-              class="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-sm" />
-          </div>
-
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Category</label>
-            <input type="text" [(ngModel)]="product.category" name="category"
-              class="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-sm" />
-          </div>
-
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Low Stock Alert</label>
-            <input type="number" [(ngModel)]="product.low_stock_threshold" name="low_stock_threshold" min="1"
-              class="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-sm" />
-          </div>
-        </div>
-
-        <div class="mt-6 pt-4 border-t border-gray-100 flex gap-3">
-          <button type="submit" [disabled]="saving()"
-            class="px-5 py-2.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors shadow-sm">
-            @if (saving()) {
-              <span class="inline-flex items-center gap-2">
-                <span class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
-                Saving...
-              </span>
-            } @else {
-              {{ isEditing() ? 'Update Product' : 'Create Product' }}
-            }
-          </button>
-          <button type="button" (click)="cancel()"
-            class="px-5 py-2.5 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">
-            Cancel
-          </button>
-        </div>
-      </form>
-    </app-portal-page-content>
+      <app-portal-button variant="danger" icon="pi-trash">
+        Delete
+      </app-portal-button>
+    </div>
   </div>
+
+  <div class="grid grid-cols-1 gap-5 xl:grid-cols-[1fr_360px]">
+    <div class="space-y-5">
+      <app-portal-page-content [padded]="true">
+        <div class="flex flex-col gap-5 md:flex-row md:items-start md:justify-between">
+          <div class="flex min-w-0 items-start gap-4">
+            <span
+              class="flex h-16 w-16 shrink-0 items-center justify-center rounded-xl text-lg font-bold"
+              [ngClass]="chemical().avatarClass"
+            >
+              {{ chemical().avatar }}
+            </span>
+            <div class="min-w-0">
+              <h1 class="truncate text-2xl font-bold text-slate-900">{{ chemical().name }}</h1>
+              <div class="mt-3 flex flex-wrap items-center gap-2">
+                <span class="rounded-md bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-600">{{ chemical().code }}</span>
+                <span class="rounded-md bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-600">CAS {{ chemical().casNo }}</span>
+                <app-portal-badge [tone]="hazardClassTone(chemical().hazardClass)">
+                  {{ chemical().hazardClass }}
+                </app-portal-badge>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-3 gap-3 text-center">
+            <div class="rounded-lg border border-slate-100 bg-slate-50 px-4 py-3">
+              <p class="text-xs font-medium text-slate-500">Stock</p>
+              <p class="mt-1 text-xl font-bold" [ngClass]="stockClass(chemical().stock)">{{ chemical().stock }}</p>
+            </div>
+            <div class="rounded-lg border border-slate-100 bg-slate-50 px-4 py-3">
+              <p class="text-xs font-medium text-slate-500">Unit</p>
+              <p class="mt-1 text-xl font-bold text-slate-900">{{ chemical().unit }}</p>
+            </div>
+            <div class="rounded-lg border border-slate-100 bg-slate-50 px-4 py-3">
+              <p class="text-xs font-medium text-slate-500">Minimum</p>
+              <p class="mt-1 text-xl font-bold text-slate-900">{{ chemical().minimumStock }}</p>
+            </div>
+          </div>
+        </div>
+
+        <p class="mt-5 text-sm leading-6 text-slate-600">{{ chemical().description }}</p>
+      </app-portal-page-content>
+
+      <app-portal-page-content>
+        <div class="border-b border-slate-100 px-5 py-4">
+          <h2 class="text-base font-semibold text-slate-900">Chemical Information</h2>
+        </div>
+        <div class="grid grid-cols-1 gap-x-6 gap-y-5 p-5 md:grid-cols-2">
+          <div>
+            <p class="text-xs font-medium uppercase text-slate-400">Chemical Code</p>
+            <p class="mt-1 text-sm font-medium text-slate-800">{{ chemical().code }}</p>
+          </div>
+          <div>
+            <p class="text-xs font-medium uppercase text-slate-400">CAS No.</p>
+            <p class="mt-1 text-sm font-medium text-slate-800">{{ chemical().casNo }}</p>
+          </div>
+          <div>
+            <p class="text-xs font-medium uppercase text-slate-400">Formula</p>
+            <p class="mt-1 text-sm font-medium text-slate-800">{{ chemical().formula }}</p>
+          </div>
+          <div>
+            <p class="text-xs font-medium uppercase text-slate-400">Molecular Weight</p>
+            <p class="mt-1 text-sm font-medium text-slate-800">{{ chemical().molecularWeight }}</p>
+          </div>
+          <div>
+            <p class="text-xs font-medium uppercase text-slate-400">Supplier</p>
+            <p class="mt-1 text-sm font-medium text-slate-800">{{ chemical().supplier }}</p>
+          </div>
+          <div>
+            <p class="text-xs font-medium uppercase text-slate-400">Manufacturer</p>
+            <p class="mt-1 text-sm font-medium text-slate-800">{{ chemical().manufacturer }}</p>
+          </div>
+        </div>
+      </app-portal-page-content>
+
+      <app-portal-page-content>
+        <div class="border-b border-slate-100 px-5 py-4">
+          <h2 class="text-base font-semibold text-slate-900">Recent Movements</h2>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="min-w-[760px] table-fixed text-left">
+            <thead class="bg-slate-50 text-xs font-semibold uppercase text-slate-500">
+              <tr>
+                <th class="w-[130px] px-5 py-3">Movement ID</th>
+                <th class="w-[120px] px-5 py-3">Type</th>
+                <th class="w-[100px] px-5 py-3">Quantity</th>
+                <th class="w-[190px] px-5 py-3">Date</th>
+                <th class="w-[130px] px-5 py-3">Handled By</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+              @for (movement of chemical().movements; track movement.id) {
+                <tr>
+                  <td class="px-5 py-4 text-sm text-slate-700">{{ movement.id }}</td>
+                  <td class="px-5 py-4">
+                    <app-portal-badge [tone]="movementTone(movement.type)">
+                      {{ movement.type }}
+                    </app-portal-badge>
+                  </td>
+                  <td class="px-5 py-4 text-sm font-medium text-slate-800">{{ movement.quantity }}</td>
+                  <td class="px-5 py-4 text-sm text-slate-600">{{ movement.date }}</td>
+                  <td class="px-5 py-4 text-sm text-slate-600">{{ movement.handledBy }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </app-portal-page-content>
+    </div>
+
+    <div class="space-y-5">
+      <app-portal-page-content>
+        <div class="border-b border-slate-100 px-5 py-4">
+          <h2 class="text-base font-semibold text-slate-900">Storage & Compliance</h2>
+        </div>
+        <div class="divide-y divide-slate-100">
+          <div class="px-5 py-4">
+            <p class="text-xs font-medium uppercase text-slate-400">Location</p>
+            <p class="mt-1 text-sm font-medium text-slate-800">{{ chemical().location }}</p>
+          </div>
+          <div class="grid grid-cols-2 gap-4 px-5 py-4">
+            <div>
+              <p class="text-xs font-medium uppercase text-slate-400">Batch No.</p>
+              <p class="mt-1 text-sm font-medium text-slate-800">{{ chemical().batchNo }}</p>
+            </div>
+            <div>
+              <p class="text-xs font-medium uppercase text-slate-400">Received</p>
+              <p class="mt-1 text-sm font-medium text-slate-800">{{ chemical().receivedDate }}</p>
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-4 px-5 py-4">
+            <div>
+              <p class="text-xs font-medium uppercase text-slate-400">Expiry Date</p>
+              <p class="mt-1 text-sm font-medium text-slate-800">{{ chemical().expiryDate }}</p>
+            </div>
+            <div>
+              <p class="text-xs font-medium uppercase text-slate-400">Expiry Status</p>
+              <app-portal-badge [tone]="expiryStatusTone(chemical().expiryStatus)">
+                {{ chemical().expiryStatus }}
+              </app-portal-badge>
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-4 px-5 py-4">
+            <div>
+              <p class="text-xs font-medium uppercase text-slate-400">SDS Status</p>
+              <app-portal-badge [tone]="sdsStatusTone(chemical().sdsStatus)">
+                {{ chemical().sdsStatus }}
+              </app-portal-badge>
+            </div>
+            <div>
+              <p class="text-xs font-medium uppercase text-slate-400">SDS Version</p>
+              <p class="mt-1 text-sm font-medium text-slate-800">{{ chemical().sdsVersion }}</p>
+            </div>
+          </div>
+        </div>
+      </app-portal-page-content>
+
+      <app-portal-page-content>
+        <div class="border-b border-slate-100 px-5 py-4">
+          <h2 class="text-base font-semibold text-slate-900">Required PPE</h2>
+        </div>
+        <div class="flex flex-wrap gap-2 p-5">
+          @for (item of chemical().ppe; track item) {
+            <span class="rounded-md bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-700">{{ item }}</span>
+          }
+        </div>
+      </app-portal-page-content>
+
+      <app-portal-page-content>
+        <div class="border-b border-slate-100 px-5 py-4">
+          <h2 class="text-base font-semibold text-slate-900">Storage Notes</h2>
+        </div>
+        <ul class="space-y-3 p-5">
+          @for (note of chemical().storageNotes; track note) {
+            <li class="flex gap-3 text-sm leading-6 text-slate-600">
+              <i class="pi pi-check-circle mt-1 text-xs text-green-600"></i>
+              <span>{{ note }}</span>
+            </li>
+          }
+        </ul>
+      </app-portal-page-content>
+    </div>
+  </div>
+} @else {
+  <div class="mb-5 flex items-center justify-between gap-3">
+    <app-portal-button icon="pi-arrow-left" link="/products">
+      Back
+    </app-portal-button>
+  </div>
+
+  <app-portal-page-content>
+    <div class="border-b border-slate-100 px-5 py-4">
+      <h2 class="text-base font-semibold text-slate-900">{{ mode() === 'new' ? 'Add Chemical' : 'Edit Chemical' }}</h2>
+    </div>
+
+    <form class="p-5" (ngSubmit)="savePreview()">
+      <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <app-portal-form-input
+          class="md:col-span-2"
+          label="Chemical Name"
+          [value]="form().name"
+          (valueChange)="updateForm('name', $event)"
+        />
+
+        <app-portal-form-input
+          label="Chemical Code"
+          [value]="form().code"
+          (valueChange)="updateForm('code', $event)"
+        />
+
+        <app-portal-form-input
+          label="CAS No."
+          [value]="form().casNo"
+          (valueChange)="updateForm('casNo', $event)"
+        />
+
+        <app-portal-form-select
+          label="Hazard Class"
+          [value]="form().hazardClass"
+          [options]="hazardClassOptions"
+          (valueChange)="updateHazardClass($event)"
+        />
+
+        <app-portal-form-input
+          label="Storage Location"
+          [value]="form().location"
+          (valueChange)="updateForm('location', $event)"
+        />
+
+        <app-portal-form-input
+          label="Stock"
+          type="number"
+          [value]="form().stock"
+          (valueChange)="updateStock($event)"
+        />
+
+        <app-portal-form-select
+          label="Unit"
+          [value]="form().unit"
+          [options]="unitOptions"
+          (valueChange)="updateUnit($event)"
+        />
+
+        <app-portal-form-textarea
+          class="md:col-span-2"
+          label="Description"
+          [value]="form().description"
+          (valueChange)="updateForm('description', $event)"
+        />
+      </div>
+
+      <div class="mt-6 flex items-center gap-3 border-t border-slate-100 pt-5">
+        <app-portal-button variant="primary" icon="pi-save" buttonType="submit">
+          {{ mode() === 'new' ? 'Create Preview' : 'Save Preview' }}
+        </app-portal-button>
+
+        <app-portal-button (buttonClick)="cancel()">
+          Cancel
+        </app-portal-button>
+      </div>
+    </form>
+  </app-portal-page-content>
 }

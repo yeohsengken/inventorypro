@@ -21,3 +21,35 @@ export interface StockMovement {
   notes?: string;
   created_at: string;
 }
+
+export enum MovementType {
+  StockIn = 'Stock In',
+  StockOut = 'Stock Out',
+  Transfer = 'Transfer',
+  Disposal = 'Disposal',
+  Adjustment = 'Adjustment',
+}
+
+export enum HazardClass {
+  Flammable = 'Flammable',
+  Corrosive = 'Corrosive',
+  Oxidizer = 'Oxidizer',
+}
+
+export enum ExpiryStatus {
+  Valid = 'Valid',
+  NearExpiry = 'Near Expiry',
+  Expired = 'Expired',
+}
+
+export enum SdsStatus {
+  Uploaded = 'Uploaded',
+  Missing = 'Missing',
+}
+
+export enum SdsDocumentStatus {
+  Current = 'Current',
+  ReviewSoon = 'Review Soon',
+  Expired = 'Expired',
+  Missing = 'Missing',
+}

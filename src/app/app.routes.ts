@@ -1,11 +1,14 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './shared/guards/auth.guard';
+import { guestGuard } from './shared/guards/guest.guard';
 import { AuthLayoutComponent } from './layouts/auth-layout/auth-layout.component';
+import { ErrorLayoutComponent } from './layouts/error-layout/error-layout.component';
 import { PortalLayoutComponent } from './layouts/portal-layout/portal-layout.component';
 
 export const routes: Routes = [
   {
-    path: '',
+    path: 'auth',
+    canActivate: [guestGuard],
     component: AuthLayoutComponent,
     loadChildren: () =>
       import('./components/portal/auth/auth.routes').then((m) => m.authRoutes),
@@ -15,6 +18,11 @@ export const routes: Routes = [
     component: PortalLayoutComponent,
     canActivate: [authGuard],
     children: [
+      {
+        path: '',
+        redirectTo: 'dashboard',
+        pathMatch: 'full',
+      },
       {
         path: 'dashboard',
         loadChildren: () =>
@@ -30,16 +38,31 @@ export const routes: Routes = [
         loadChildren: () =>
           import('./components/portal/stock/stock.routes').then((m) => m.stockRoutes),
       },
+      {
+        path: 'sds',
+        loadChildren: () =>
+          import('./components/portal/sds/sds.routes').then((m) => m.sdsRoutes),
+      },
+      {
+        path: 'reports',
+        loadChildren: () =>
+          import('./components/portal/reports/reports.routes').then((m) => m.reportRoutes),
+      },
+      {
+        path: 'settings',
+        loadChildren: () =>
+          import('./components/portal/settings/settings.routes').then((m) => m.settingsRoutes),
+      },
     ],
   },
   {
-    path: '403',
-    loadComponent: () =>
-      import('./errors/forbidden/forbidden.component').then((c) => c.ForbiddenComponent),
+    path: 'error',
+    component: ErrorLayoutComponent,
+    loadChildren: () =>
+      import('./errors/error.routes').then((m) => m.errorRoutes),
   },
   {
     path: '**',
-    loadComponent: () =>
-      import('./errors/not-found/not-found.component').then((c) => c.NotFoundComponent),
+    redirectTo: 'error/404',
   },
 ];

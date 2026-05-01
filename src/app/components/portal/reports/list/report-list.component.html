@@ -1,0 +1,75 @@
+<app-portal-actions>
+  <app-portal-button icon="pi-calendar">
+    Schedule
+  </app-portal-button>
+
+  <app-portal-button variant="primary" icon="pi-plus">
+    Generate Report
+  </app-portal-button>
+</app-portal-actions>
+
+<app-portal-metric-grid [metrics]="metrics" />
+
+<app-portal-page-content>
+  <app-portal-filter-bar layout="five">
+      <app-portal-search-filter
+        [value]="searchTerm()"
+        placeholder="Search report, ID, or creator"
+        (valueChange)="searchTerm.set($event); first.set(0)"
+      />
+
+      <app-portal-select-filter
+        [value]="selectedType()"
+        [options]="typeOptions"
+        (valueChange)="selectedType.set($event); first.set(0)"
+      />
+
+      <app-portal-select-filter
+        [value]="selectedStatus()"
+        [options]="statusOptions"
+        (valueChange)="selectedStatus.set($event); first.set(0)"
+      />
+
+      <app-portal-select-filter
+        [value]="selectedPeriod()"
+        [options]="periodOptions"
+        (valueChange)="selectedPeriod.set($event); first.set(0)"
+      />
+
+      <app-portal-button icon="pi-refresh" [full]="true" (buttonClick)="resetFilters()">
+        Reset
+      </app-portal-button>
+  </app-portal-filter-bar>
+
+  <app-portal-data-table [config]="tableConfig()">
+      <ng-template portalDataTableBody let-report>
+        <tr>
+          <td class="text-sm text-slate-700">{{ report.reportId }}</td>
+          <td class="text-sm font-medium text-slate-800">{{ report.name }}</td>
+          <td>
+            <app-portal-badge [tone]="typeTone(report.type)">
+              {{ report.type }}
+            </app-portal-badge>
+          </td>
+          <td class="text-sm text-slate-600">{{ report.period }}</td>
+          <td class="text-sm text-slate-600">{{ report.generatedBy }}</td>
+          <td class="text-sm text-slate-600">{{ report.generatedAt }}</td>
+          <td>
+            <app-portal-badge [tone]="statusTone(report.status)">
+              {{ report.status }}
+            </app-portal-badge>
+          </td>
+          <td class="text-sm font-semibold text-slate-700">{{ report.format }}</td>
+          <td class="text-sm text-slate-600">{{ report.size }}</td>
+          <td class="text-center">
+            <app-portal-inline-actions>
+              <app-portal-button size="icon" variant="ghost" icon="pi-download" ariaLabel="Download report" title="Download" />
+
+              <app-portal-button size="icon" variant="ghost-danger" icon="pi-trash" ariaLabel="Delete report" title="Delete" />
+            </app-portal-inline-actions>
+          </td>
+        </tr>
+      </ng-template>
+
+  </app-portal-data-table>
+</app-portal-page-content>

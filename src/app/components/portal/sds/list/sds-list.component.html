@@ -1,0 +1,84 @@
+<app-portal-actions>
+  <app-portal-button icon="pi-download">
+    Export
+  </app-portal-button>
+
+  <app-portal-button variant="primary" icon="pi-upload">
+    Upload SDS
+  </app-portal-button>
+</app-portal-actions>
+
+<app-portal-page-content>
+  <app-portal-filter-bar layout="six">
+      <app-portal-search-filter
+        [value]="searchTerm()"
+        placeholder="Search SDS, chemical, or CAS no."
+        (valueChange)="searchTerm.set($event); first.set(0)"
+      />
+
+      <app-portal-select-filter
+        [value]="selectedHazardClass()"
+        [options]="hazardClassOptions"
+        (valueChange)="selectedHazardClass.set($event); first.set(0)"
+      />
+
+      <app-portal-select-filter
+        [value]="selectedChemical()"
+        [options]="chemicalOptions"
+        (valueChange)="selectedChemical.set($event); first.set(0)"
+      />
+
+      <app-portal-select-filter
+        [value]="selectedStatus()"
+        [options]="statusOptions"
+        (valueChange)="selectedStatus.set($event); first.set(0)"
+      />
+
+      <app-portal-date-filter [label]="selectedDateRange()" />
+
+      <app-portal-button icon="pi-refresh" [full]="true" (buttonClick)="resetFilters()">
+        Reset
+      </app-portal-button>
+  </app-portal-filter-bar>
+
+  <app-portal-data-table [config]="tableConfig()">
+      <ng-template portalDataTableBody let-document>
+        <tr>
+          <td class="text-sm text-slate-700">{{ document.documentId }}</td>
+          <td class="text-sm font-medium text-slate-800">{{ document.chemical }}</td>
+          <td class="text-sm text-slate-600">{{ document.casNo }}</td>
+          <td>
+            <app-portal-badge [tone]="hazardClassTone(document.hazardClass)">
+              {{ document.hazardClass }}
+            </app-portal-badge>
+          </td>
+          <td class="text-sm text-slate-700">{{ document.version }}</td>
+          <td class="text-sm text-slate-600">{{ document.revisionDate }}</td>
+          <td class="text-sm text-slate-600">{{ document.expiryDate }}</td>
+          <td>
+            <app-portal-badge [tone]="statusTone(document.status)">
+              {{ document.status }}
+            </app-portal-badge>
+          </td>
+          <td class="text-sm text-slate-600">{{ document.uploadedBy }}</td>
+          <td>
+            <div class="flex min-w-0 items-center gap-2">
+              <i class="pi pi-file-pdf flex-none text-sm text-red-500"></i>
+              <div class="min-w-0">
+                <p class="truncate text-sm text-slate-700" [title]="document.fileName">{{ document.fileName }}</p>
+                <p class="text-xs text-slate-400">{{ document.fileSize }}</p>
+              </div>
+            </div>
+          </td>
+          <td class="text-center">
+            <app-portal-inline-actions>
+              <app-portal-button size="icon" variant="ghost" icon="pi-pencil" ariaLabel="Edit SDS" title="Edit" />
+
+              <app-portal-button size="icon" variant="ghost-danger" icon="pi-trash" ariaLabel="Delete SDS" title="Delete" />
+            </app-portal-inline-actions>
+          </td>
+        </tr>
+      </ng-template>
+
+  </app-portal-data-table>
+</app-portal-page-content>

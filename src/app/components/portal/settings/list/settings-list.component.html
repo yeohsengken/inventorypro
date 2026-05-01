@@ -1,0 +1,168 @@
+<div class="mb-5 flex items-center justify-end gap-3">
+  <app-portal-button icon="pi-refresh">
+    Reset
+  </app-portal-button>
+
+  <app-portal-button variant="primary" icon="pi-save">
+    Save Changes
+  </app-portal-button>
+</div>
+
+<div class="grid grid-cols-1 gap-5 xl:grid-cols-[1fr_360px]">
+  <div class="space-y-5">
+    <app-portal-page-content>
+      <div class="border-b border-slate-100 px-5 py-4">
+        <h2 class="text-base font-semibold text-slate-900">Organization Profile</h2>
+      </div>
+
+      <div class="grid grid-cols-1 gap-4 p-5 md:grid-cols-2">
+        <app-portal-form-input
+          label="Organization Name"
+          [value]="organizationName()"
+          (valueChange)="organizationName.set($event)"
+        />
+
+        <app-portal-form-input
+          label="Facility Code"
+          [value]="facilityCode()"
+          (valueChange)="facilityCode.set($event)"
+        />
+
+        <app-portal-form-select
+          label="Default Location"
+          [value]="defaultLocation()"
+          [options]="locationOptions"
+          (valueChange)="defaultLocation.set($event)"
+        />
+
+        <app-portal-form-select
+          label="Timezone"
+          [value]="timezone()"
+          [options]="timezoneOptions"
+          (valueChange)="timezone.set($event)"
+        />
+      </div>
+    </app-portal-page-content>
+
+    <app-portal-page-content>
+      <div class="border-b border-slate-100 px-5 py-4">
+        <h2 class="text-base font-semibold text-slate-900">Chemical Rules</h2>
+      </div>
+
+      <div class="grid grid-cols-1 gap-4 p-5 md:grid-cols-3">
+        <app-portal-form-input
+          label="Low Stock Threshold"
+          type="number"
+          [min]="0"
+          [value]="lowStockThreshold()"
+          (valueChange)="lowStockThreshold.set($event)"
+        />
+
+        <app-portal-form-input
+          label="Expiry Warning Days"
+          type="number"
+          [min]="0"
+          [value]="expiryWarningDays()"
+          (valueChange)="expiryWarningDays.set($event)"
+        />
+
+        <app-portal-form-input
+          label="SDS Review Months"
+          type="number"
+          [min]="1"
+          [value]="sdsReviewMonths()"
+          (valueChange)="sdsReviewMonths.set($event)"
+        />
+      </div>
+    </app-portal-page-content>
+
+    <app-portal-page-content>
+      <div class="border-b border-slate-100 px-5 py-4">
+        <h2 class="text-base font-semibold text-slate-900">User Access</h2>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="min-w-[760px] table-fixed text-left">
+          <thead class="bg-slate-50 text-xs font-semibold uppercase text-slate-500">
+            <tr>
+              <th class="w-[180px] px-5 py-3">Name</th>
+              <th class="w-[240px] px-5 py-3">Email</th>
+              <th class="w-[160px] px-5 py-3">Role</th>
+              <th class="w-[110px] px-5 py-3">Status</th>
+              <th class="w-[70px] px-5 py-3 text-center">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100">
+            @for (user of users; track user.email) {
+              <tr>
+                <td class="px-5 py-4 text-sm font-medium text-slate-800">{{ user.name }}</td>
+                <td class="px-5 py-4 text-sm text-slate-600">{{ user.email }}</td>
+                <td class="px-5 py-4 text-sm text-slate-600">{{ user.role }}</td>
+                <td class="px-5 py-4">
+                  <app-portal-badge [tone]="statusTone(user.status)">
+                    {{ user.status }}
+                  </app-portal-badge>
+                </td>
+                <td class="px-5 py-4 text-center">
+                  <app-portal-button size="icon" variant="ghost" icon="pi-pencil" ariaLabel="Edit user" title="Edit" />
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </app-portal-page-content>
+  </div>
+
+  <div class="space-y-5">
+    <app-portal-page-content>
+      <div class="border-b border-slate-100 px-5 py-4">
+        <h2 class="text-base font-semibold text-slate-900">Notifications</h2>
+      </div>
+
+      <div class="divide-y divide-slate-100">
+        <app-portal-toggle-row
+          label="Email Alerts"
+          hint="Send important updates by email"
+          [checked]="emailAlerts()"
+          (checkedChange)="emailAlerts.set($event)"
+        />
+
+        <app-portal-toggle-row
+          label="Low Stock Alerts"
+          hint="Notify when chemicals need restock"
+          [checked]="lowStockAlerts()"
+          (checkedChange)="lowStockAlerts.set($event)"
+        />
+
+        <app-portal-toggle-row
+          label="Expiry Alerts"
+          hint="Notify before chemical expiry"
+          [checked]="expiryAlerts()"
+          (checkedChange)="expiryAlerts.set($event)"
+        />
+
+        <app-portal-toggle-row
+          label="Weekly Summary"
+          hint="Send a weekly report digest"
+          [checked]="weeklySummary()"
+          (checkedChange)="weeklySummary.set($event)"
+        />
+      </div>
+    </app-portal-page-content>
+
+    <app-portal-page-content [padded]="true">
+      <div class="flex items-start gap-3">
+        <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-blue-700">
+          <i class="pi pi-database text-sm"></i>
+        </div>
+        <div>
+          <h2 class="text-base font-semibold text-slate-900">Supabase Status</h2>
+          <p class="mt-2 text-sm leading-6 text-slate-500">
+            Settings are hardcoded for UI preview. Auth can still use Supabase, but this page will not save to database yet.
+          </p>
+        </div>
+      </div>
+    </app-portal-page-content>
+  </div>
+</div>

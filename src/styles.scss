@@ -2,3 +2,121 @@
 @tailwind components;
 @tailwind utilities;
 @import "primeicons/primeicons.css";
+
+.portal-data-table {
+  --table-border: rgb(226 232 240);
+  --table-muted: rgb(248 250 252);
+
+  .p-datatable-wrapper {
+    border: 1px solid var(--table-border);
+    border-radius: 0.5rem;
+    overflow: auto;
+    padding-right: 0.25rem;
+  }
+
+  .p-datatable-table {
+    border-collapse: separate;
+    border-spacing: 0;
+    table-layout: fixed;
+  }
+
+  .p-datatable-thead > tr > th {
+    background: var(--table-muted);
+    border-bottom: 1px solid var(--table-border);
+    color: rgb(15 23 42);
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.75rem;
+    text-align: left;
+    white-space: nowrap;
+  }
+
+  .p-datatable-thead > tr > th:last-child,
+  .p-datatable-tbody > tr > td:last-child {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+
+  .p-datatable-tbody > tr > td {
+    border-bottom: 1px solid var(--table-border);
+    overflow: hidden;
+    padding: 0.5rem 0.75rem;
+    text-overflow: ellipsis;
+    vertical-align: middle;
+    white-space: nowrap;
+  }
+
+  .p-datatable-tbody > tr:last-child > td {
+    border-bottom: 0;
+  }
+
+  .p-datatable-tbody > tr {
+    background: white;
+    transition: background-color 150ms ease;
+  }
+
+  .p-datatable-tbody > tr:hover {
+    background: var(--table-muted);
+  }
+
+  .p-sortable-column {
+    outline: none;
+  }
+
+  .p-sortable-column-icon {
+    color: rgb(148 163 184);
+    height: 0.75rem;
+    margin-left: 0.35rem;
+    width: 0.75rem;
+  }
+
+  .p-paginator {
+    align-items: center;
+    background: transparent;
+    border: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: flex-end;
+    padding: 1.25rem 0 0.25rem;
+    row-gap: 0.75rem;
+  }
+
+  .p-paginator-left-content {
+    margin-right: auto;
+    min-width: 14rem;
+  }
+
+  .p-paginator-page,
+  .p-paginator-next,
+  .p-paginator-prev,
+  .p-paginator-first,
+  .p-paginator-last {
+    align-items: center;
+    border: 1px solid transparent;
+    border-radius: 0.5rem;
+    color: rgb(51 65 85);
+    display: inline-flex;
+    height: 2.25rem;
+    justify-content: center;
+    min-width: 2.25rem;
+  }
+
+  .p-paginator-page.p-highlight {
+    background: rgb(239 246 255);
+    border-color: rgb(59 130 246);
+    color: rgb(37 99 235);
+    font-weight: 600;
+  }
+
+  .p-paginator-next,
+  .p-paginator-prev {
+    border-color: var(--table-border);
+  }
+
+  .p-paginator-rpp-options {
+    border: 1px solid var(--table-border);
+    border-radius: 0.5rem;
+    height: 2.25rem;
+  }
+}

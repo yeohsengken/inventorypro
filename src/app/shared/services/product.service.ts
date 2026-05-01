@@ -62,13 +62,9 @@ export class ProductService {
   }
 
   async getLowStock(): Promise<Product[]> {
-    const { data, error } = await this.client
-      .from('products')
-      .select('*')
-      .lte('quantity', this.client.rpc('get_low_stock_threshold'))
-      .order('quantity', { ascending: true });
-
-    if (error) throw error;
-    return data || [];
+    const products = await this.getAll();
+    return products
+      .filter((product) => product.quantity <= product.low_stock_threshold)
+      .sort((a, b) => a.quantity - b.quantity);
   }
 }

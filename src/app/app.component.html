@@ -1,1 +1,6 @@
-<router-outlet></router-outlet>
+<app-root-page-spinner name="rootPageSpinner" [show]="isFullScreenSpinnerShow()" />
+
+@if (isPageReady()) {
+  <router-outlet />
+  <p-toast key="local" position="top-right" />
+}
